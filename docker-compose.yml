@@ -1,0 +1,95 @@
+volumes:
+    logs:
+        driver: local
+    mysql_data:
+        driver: local
+    mongo_data:
+        driver: local
+
+services:
+    # MySQL
+    mysql:
+        image: mysql:8.0
+        container_name: microservices_mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: slim
+            MYSQL_USER: slim
+            MYSQL_PASSWORD: slim
+        ports:
+            - "3306:3306"
+        volumes:
+            - mysql_data:/var/lib/mysql
+            - ./slim/database/migrations:/docker-entrypoint-initdb.d
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        networks:
+            - microservices_network
+
+    # MongoDB
+    mongodb:
+        image: mongo:7.0
+        container_name: microservices_mongodb
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: admin
+            MONGO_INITDB_ROOT_PASSWORD: admin123
+            MONGO_INITDB_DATABASE: express_db
+        ports:
+            - "27017:27017"
+        volumes:
+            - mongo_data:/data/db
+        healthcheck:
+            test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        networks:
+            - microservices_network
+
+    # API Slim (PHP)
+    slim:
+        build:
+            context: ./slim
+            dockerfile: Dockerfile
+        working_dir: /var/www
+        command: php -S 0.0.0.0:8000 -t public
+        environment:
+            docker: "true"
+        ports:
+            - "8000:8000"
+        volumes:
+            - ./slim:/var/www
+            - logs:/var/www/logs
+        depends_on:
+            mysql:
+                condition: service_healthy
+        networks:
+            - microservices_network
+
+    # API Express (Node.js)
+    api_express:
+        build:
+            context: ./api_express
+            dockerfile: Dockerfile
+        working_dir: /app
+        command: node app.js
+        environment:
+            MONGODB_URI: mongodb://admin:admin123@mongodb:27017/express_db?authSource=admin
+            NODE_ENV: development
+        ports:
+            - "5555:5555"
+        volumes:
+            - ./api_express:/app
+            - /app/node_modules
+        depends_on:
+            mongodb:
+                condition: service_healthy
+        networks:
+            - microservices_network
+
+networks:
+    microservices_network:
+        driver: bridge
