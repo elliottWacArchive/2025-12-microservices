@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Domain\Message\MessageRepository;
 use App\Domain\User\UserRepository;
+use App\Infrastructure\Persistence\Message\EloquentMessageRepository;
 use App\Infrastructure\Persistence\User\EloquentUserRepository;
 use App\Infrastructure\Persistence\User\InMemoryUserRepository;
 use DI\ContainerBuilder;
@@ -16,6 +18,11 @@ return function (ContainerBuilder $containerBuilder) {
             $capsule = $c->get(Capsule::class);
             
             return new EloquentUserRepository();
+        },
+        MessageRepository::class => function (ContainerInterface $c) {
+            $capsule = $c->get(Capsule::class);
+            
+            return new EloquentMessageRepository();
         },
     ]);
 };
