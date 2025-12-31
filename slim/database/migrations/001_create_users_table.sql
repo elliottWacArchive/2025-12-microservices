@@ -9,14 +9,4 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 -- test data
 INSERT INTO `users` (`username`, `first_name`, `last_name`) VALUES
-('bill.gates', 'Bill', 'Gates'),
-('steve.jobs', 'Steve', 'Jobs'),
-('mark.zuckerberg', 'Mark', 'Zuckerberg'),
-('evan.spiegel', 'Evan', 'Spiegel'),
-('jack.dorsey', 'Jack', 'Dorsey'),
-('elliott.bg', 'Elliott', 'Bg'),
-('john.doe', 'John', 'Doe'),
-('jane.doe', 'Jane', 'Doe'),
-('jim.beam', 'Jim', 'Beam'),
-('jill.doe', 'Jill', 'Doe'),
-('jeff.bezos', 'Jeff', 'Bezos');
+('test.test', 'Test', 'Test');
