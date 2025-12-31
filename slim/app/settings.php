@@ -19,10 +19,10 @@ return function (ContainerBuilder $containerBuilder) {
                 'determineRouteBeforeAppMiddleware' => false,
                 'db' => [
                     'driver' => 'mysql',
-                    'host' => 'localhost',
+                    'host' => isset($_ENV['docker']) ? 'mysql' : 'localhost',
                     'database' => 'slim',
-                    'username' => 'root',
-                    'password' => '',
+                    'username' => isset($_ENV['docker']) ? 'root' : 'root',
+                    'password' => isset($_ENV['docker']) ? 'root' : '',
                     'charset' => 'utf8',
                     'collation' => 'utf8_unicode_ci',
                     'prefix' => '',
