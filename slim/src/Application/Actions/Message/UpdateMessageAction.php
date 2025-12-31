@@ -14,10 +14,19 @@ class UpdateMessageAction extends MessageAction
         $messageId = (int) $this->resolveArg('id');
         $data = $this->getFormData();
 
+        $userId = (int) $this->request->getAttribute('userId');
+
         $existingMessage = $this->messageRepository->findMessageOfId($messageId);
 
-        $userId = isset($data['userId']) ? (int) $data['userId'] : $existingMessage->getUserId();
+        if ($existingMessage->getUserId() !== $userId) {
+            return $this->respondWithData(['error' => 'You can only update your own messages'], 403);
+        }
+
         $content = $data['content'] ?? $existingMessage->getContent();
+
+        if (empty($content)) {
+            return $this->respondWithData(['error' => 'content cannot be empty'], 400);
+        }
 
         $message = new Message(
             $messageId,
@@ -27,7 +36,7 @@ class UpdateMessageAction extends MessageAction
 
         $updatedMessage = $this->messageRepository->update($message);
 
-        $this->logger->info("Message of id `${messageId}` was updated.");
+        $this->logger->info("Message of id `${messageId}` was updated by user: {$userId}");
 
         return $this->respondWithData($updatedMessage);
     }
