@@ -31,12 +31,25 @@ class EloquentUserRepository implements UserRepository
 
         return $this->toDomainUser($eloquentUser);
     }
+    public function findByUsername(string $username): User
+    {
+        $eloquentUser = EloquentUser::where('username', strtolower($username))->first();
+
+        if ($eloquentUser === null) {
+            throw new UserNotFoundException();
+        }
+
+        return $this->toDomainUser($eloquentUser);
+    }
     public function create(User $user): User
     {
         $eloquentUser = new EloquentUser();
         $eloquentUser->username = $user->getUsername();
         $eloquentUser->first_name = $user->getFirstName();
         $eloquentUser->last_name = $user->getLastName();
+        if ($user->getPassword() !== null) {
+            $eloquentUser->password = password_hash($user->getPassword(), PASSWORD_DEFAULT);
+        }
         $eloquentUser->save();
 
         return $this->toDomainUser($eloquentUser);
@@ -73,7 +86,8 @@ class EloquentUserRepository implements UserRepository
             $eloquentUser->id,
             $eloquentUser->username,
             $eloquentUser->first_name,
-            $eloquentUser->last_name
+            $eloquentUser->last_name,
+            $eloquentUser->password ?? null
         );
     }
 }
