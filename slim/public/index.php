@@ -34,6 +34,9 @@ $repositories($containerBuilder);
 // Build PHP-DI Container instance
 $container = $containerBuilder->build();
 
+use Illuminate\Database\Capsule\Manager as Capsule;
+$capsule = $container->get(Capsule::class);
+
 // Instantiate the app
 AppFactory::setContainer($container);
 $app = AppFactory::create();
