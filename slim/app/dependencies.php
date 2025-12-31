@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Services\JwtService;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -46,6 +47,16 @@ return function (ContainerBuilder $containerBuilder) {
             $capsule->bootEloquent();
 
             return $capsule;
+        },
+        JwtService::class => function (ContainerInterface $c) {
+            $settings = $c->get(SettingsInterface::class);
+            $jwtSettings = $settings->get('jwt');
+
+            return new JwtService(
+                $jwtSettings['secret'],
+                $jwtSettings['algorithm'],
+                $jwtSettings['expiration']
+            );
         },
     ]);
 };
