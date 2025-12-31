@@ -14,6 +14,11 @@ class EloquentUser extends Model
         'username',
         'first_name',
         'last_name',
+        'password',
+    ];
+
+    protected $hidden = [
+        'password',
     ];
     protected $casts = [
         'id' => 'integer',
