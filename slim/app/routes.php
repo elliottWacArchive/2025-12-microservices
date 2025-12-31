@@ -2,16 +2,19 @@
 
 declare(strict_types=1);
 
-use App\Application\Actions\User\CreateUserAction;
-use App\Application\Actions\User\DeleteUserAction;
-use App\Application\Actions\User\ListUsersAction;
-use App\Application\Actions\User\UpdateUserAction;
-use App\Application\Actions\User\ViewUserAction;
+use App\Application\Actions\Auth\LoginAction;
+use App\Application\Actions\Auth\RegisterAction;
 use App\Application\Actions\Message\CreateMessageAction;
 use App\Application\Actions\Message\DeleteMessageAction;
 use App\Application\Actions\Message\ListMessagesAction;
 use App\Application\Actions\Message\UpdateMessageAction;
 use App\Application\Actions\Message\ViewMessageAction;
+use App\Application\Actions\User\CreateUserAction;
+use App\Application\Actions\User\DeleteUserAction;
+use App\Application\Actions\User\ListUsersAction;
+use App\Application\Actions\User\UpdateUserAction;
+use App\Application\Actions\User\ViewUserAction;
+use App\Application\Middleware\JwtMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -30,23 +33,30 @@ return function (App $app) {
         return $response;
     });
 
-    // Routes Users
-    $app->group('/users', function (Group $group) {
-        $group->get('', ListUsersAction::class);           // get /users : liste tous les users
-        $group->get('/{id}', ViewUserAction::class);       // get /users/{id} : voir un user
-        $group->post('', CreateUserAction::class);          // post /users : créer un user
-        $group->put('/{id}', UpdateUserAction::class);      // put /users/{id} : update un user
-        $group->delete('/{id}', DeleteUserAction::class);  // delete /users/{id} : delete un user
-    });
+    // Routes d'auth (publiques)
+    $app->post('/auth/register', RegisterAction::class);  // post /auth/register : inscription
+    $app->post('/auth/login', LoginAction::class);        // post /auth/login : connexion (renvoie token)
 
-    // Routes Messages
-    $app->group('/messages', function (Group $group) {
-        $group->get('', ListMessagesAction::class);           // get /messages : liste tous les messages
-        $group->get('/{id}', ViewMessageAction::class);      // get /messages/{id} : voir un message
-        $group->post('', CreateMessageAction::class);         // post /messages : créer un message
-        $group->put('/{id}', UpdateMessageAction::class);     // put /messages/{id} : update un message
-        $group->delete('/{id}', DeleteMessageAction::class);  // delete /messages/{id} : delete un message
-    });
+    // Routes protégées
+    $app->group('', function (Group $group) {
+        // Routes Users (protégées)
+        $group->group('/users', function (Group $usersGroup) {
+            $usersGroup->get('', ListUsersAction::class);           // get /users : liste tous les users
+            $usersGroup->get('/{id}', ViewUserAction::class);       // get /users/{id} : voir un user
+            $usersGroup->post('', CreateUserAction::class);         // post /users : créer un user
+            $usersGroup->put('/{id}', UpdateUserAction::class);     // put /users/{id} : update un user
+            $usersGroup->delete('/{id}', DeleteUserAction::class);  // delete /users/{id} : delete un user
+        });
+
+        // Routes Messages (protégées)
+        $group->group('/messages', function (Group $messagesGroup) {
+            $messagesGroup->get('', ListMessagesAction::class);             // get /messages : liste tous les messages
+            $messagesGroup->get('/{id}', ViewMessageAction::class);         // get /messages/{id} : voir un message
+            $messagesGroup->post('', CreateMessageAction::class);           // post /messages : créer un message
+            $messagesGroup->put('/{id}', UpdateMessageAction::class);       // put /messages/{id} : update un message
+            $messagesGroup->delete('/{id}', DeleteMessageAction::class);    // delete /messages/{id} : delete un message
+        });
+    })->add(JwtMiddleware::class);
 
     $app->get('/eloquent-test', function (Request $request, Response $response) use ($app) {
         $container = $app->getContainer();
