@@ -1,18 +1,42 @@
-version: '3.7'
-
 volumes:
     logs:
         driver: local
+    mysql_data:
+        driver: local
 
 services:
+    mysql:
+        image: mysql:8.0
+        container_name: slim_mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: slim
+            MYSQL_USER: slim
+            MYSQL_PASSWORD: slim
+        ports:
+            - "3306:3306"
+        volumes:
+            - mysql_data:/var/lib/mysql
+            - ./database/migrations:/docker-entrypoint-initdb.d
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
     slim:
-        image: php:7-alpine
+        build:
+            context: .
+            dockerfile: Dockerfile
         working_dir: /var/www
-        command: php -S 0.0.0.0:8080 -t public
+        command: php -S 0.0.0.0:8000 -t public
         environment:
             docker: "true"
         ports:
-            - "8080:8080"
+            - "8000:8000"
         volumes:
             - .:/var/www
             - logs:/var/www/logs
+        depends_on:
+            mysql:
+                condition: service_healthy
