@@ -31,6 +31,42 @@ class EloquentUserRepository implements UserRepository
 
         return $this->toDomainUser($eloquentUser);
     }
+    public function create(User $user): User
+    {
+        $eloquentUser = new EloquentUser();
+        $eloquentUser->username = $user->getUsername();
+        $eloquentUser->first_name = $user->getFirstName();
+        $eloquentUser->last_name = $user->getLastName();
+        $eloquentUser->save();
+
+        return $this->toDomainUser($eloquentUser);
+    }
+    public function update(User $user): User
+    {
+        $eloquentUser = EloquentUser::find($user->getId());
+
+        if ($eloquentUser === null) {
+            throw new UserNotFoundException();
+        }
+
+        $eloquentUser->username = $user->getUsername();
+        $eloquentUser->first_name = $user->getFirstName();
+        $eloquentUser->last_name = $user->getLastName();
+        $eloquentUser->save();
+
+        return $this->toDomainUser($eloquentUser);
+    }
+    public function delete(int $id): void
+    {
+        $eloquentUser = EloquentUser::find($id);
+
+        if ($eloquentUser === null) {
+            throw new UserNotFoundException();
+        }
+
+        $eloquentUser->delete();
+    }
+
     private function toDomainUser(EloquentUser $eloquentUser): User
     {
         return new User(
