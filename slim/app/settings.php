@@ -32,6 +32,11 @@ return function (ContainerBuilder $containerBuilder) {
                     'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
                     'level' => Logger::DEBUG,
                 ],
+                'jwt' => [
+                    'secret' => $_ENV['JWT_SECRET'] ?? 'phrase-top-secrete-lolilol-mais-il-faut-mettre-un-vrai-truc-en-prod',
+                    'algorithm' => 'HS256',
+                    'expiration' => 3600, // 1 heure
+                ],
             ]);
         }
     ]);
