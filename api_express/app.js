@@ -2,6 +2,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+
+// routes requirements
+const discussionRoutes = require("./Routes/discussion.route");
+
 // init app
 const app = express();
 
@@ -22,6 +26,9 @@ db.once("open", () => {
 // Utilisation de body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// routes
+app.use("/discussions", discussionRoutes);
 
 let port = 5555;
 
