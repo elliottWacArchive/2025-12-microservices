@@ -7,6 +7,7 @@ use App\Application\Actions\Auth\RegisterAction;
 use App\Application\Actions\Message\CreateMessageAction;
 use App\Application\Actions\Message\DeleteMessageAction;
 use App\Application\Actions\Message\ListMessagesAction;
+use App\Application\Actions\Message\ListMyMessagesAction;
 use App\Application\Actions\Message\UpdateMessageAction;
 use App\Application\Actions\Message\ViewMessageAction;
 use App\Application\Actions\User\CreateUserAction;
@@ -51,6 +52,7 @@ return function (App $app) {
         // Routes Messages (protégées)
         $group->group('/messages', function (Group $messagesGroup) {
             $messagesGroup->get('', ListMessagesAction::class);             // get /messages : liste tous les messages
+            $messagesGroup->get('/me', ListMyMessagesAction::class);        // get /messages/me : liste mes messages
             $messagesGroup->get('/{id}', ViewMessageAction::class);         // get /messages/{id} : voir un message
             $messagesGroup->post('', CreateMessageAction::class);           // post /messages : créer un message
             $messagesGroup->put('/{id}', UpdateMessageAction::class);       // put /messages/{id} : update un message
