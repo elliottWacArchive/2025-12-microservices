@@ -90,6 +90,23 @@ services:
         networks:
             - microservices_network
 
+    # API Lumen (PHP)
+    lumen:
+        build:
+            context: ./lumen
+            dockerfile: Dockerfile
+        working_dir: /var/www
+        command: php -S 0.0.0.0:8001 -t public
+        ports:
+            - "8001:8001"
+        volumes:
+            - ./lumen:/var/www
+        depends_on:
+            - slim
+            - api_express
+        networks:
+            - microservices_network
+
 networks:
     microservices_network:
         driver: bridge
