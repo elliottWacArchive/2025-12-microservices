@@ -13,7 +13,7 @@ class ViewMessageAction extends MessageAction
         $messageId = (int) $this->resolveArg('id');
         $message = $this->messageRepository->findMessageOfId($messageId);
 
-        $this->logger->info("Message of id `${messageId}` was viewed.");
+        $this->logger->info("Message of id `{$messageId}` was viewed.");
 
         return $this->respondWithData($message);
     }

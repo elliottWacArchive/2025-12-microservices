@@ -36,7 +36,7 @@ class UpdateMessageAction extends MessageAction
 
         $updatedMessage = $this->messageRepository->update($message);
 
-        $this->logger->info("Message of id `${messageId}` was updated by user: {$userId}");
+        $this->logger->info("Message of id `{$messageId}` was updated by user: {$userId}");
 
         return $this->respondWithData($updatedMessage);
     }

@@ -29,7 +29,7 @@ class UpdateUserAction extends UserAction
 
         $updatedUser = $this->userRepository->update($user);
 
-        $this->logger->info("User of id `${userId}` was updated.");
+        $this->logger->info("User of id `{$userId}` was updated.");
 
         return $this->respondWithData($updatedUser);
     }

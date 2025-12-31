@@ -22,7 +22,7 @@ class DeleteMessageAction extends MessageAction
 
         $this->messageRepository->delete($messageId);
 
-        $this->logger->info("Message of id `${messageId}` was deleted by user: {$userId}");
+        $this->logger->info("Message of id `{$messageId}` was deleted by user: {$userId}");
 
         return $this->respondWithData(['message' => 'Message deleted successfully'], 200);
     }
