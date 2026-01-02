@@ -50,6 +50,7 @@ class EloquentMessageRepository implements MessageRepository
         $eloquentMessage = new EloquentMessage();
         $eloquentMessage->user_id = $message->getUserId();
         $eloquentMessage->content = $message->getContent();
+        $eloquentMessage->discussion_id = $message->getDiscussionId();
         $eloquentMessage->save();
 
         return $this->toDomainMessage($eloquentMessage);
@@ -65,6 +66,7 @@ class EloquentMessageRepository implements MessageRepository
 
         $eloquentMessage->user_id = $message->getUserId();
         $eloquentMessage->content = $message->getContent();
+        $eloquentMessage->discussion_id = $message->getDiscussionId();
         $eloquentMessage->save();
 
         return $this->toDomainMessage($eloquentMessage);
@@ -87,6 +89,7 @@ class EloquentMessageRepository implements MessageRepository
             $eloquentMessage->id,
             $eloquentMessage->user_id,
             $eloquentMessage->content,
+            $eloquentMessage->discussion_id,
             $eloquentMessage->created_at ? $eloquentMessage->created_at->toDateTimeString() : null
         );
     }

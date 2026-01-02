@@ -18,11 +18,13 @@ class CreateMessageAction extends MessageAction
         }
 
         $userId = (int) $this->request->getAttribute('userId');
+        $discussionId = $data['discussion_id'] ?? null;
 
         $message = new Message(
             null,
             $userId,
-            $data['content']
+            $data['content'],
+            $discussionId
         );
 
         $createdMessage = $this->messageRepository->create($message);

@@ -14,13 +14,16 @@ class Message implements JsonSerializable
 
     private string $content;
 
+    private ?string $discussionId;
+
     private ?string $createdAt;
 
-    public function __construct(?int $id, int $userId, string $content, ?string $createdAt = null)
+    public function __construct(?int $id, int $userId, string $content, ?string $discussionId = null, ?string $createdAt = null)
     {
         $this->id = $id;
         $this->userId = $userId;
         $this->content = $content;
+        $this->discussionId = $discussionId;
         $this->createdAt = $createdAt;
     }
 
@@ -39,6 +42,11 @@ class Message implements JsonSerializable
         return $this->content;
     }
 
+    public function getDiscussionId(): ?string
+    {
+        return $this->discussionId;
+    }
+
     public function getCreatedAt(): ?string
     {
         return $this->createdAt;
@@ -51,6 +59,7 @@ class Message implements JsonSerializable
             'id' => $this->id,
             'userId' => $this->userId,
             'content' => $this->content,
+            'discussionId' => $this->discussionId,
             'createdAt' => $this->createdAt,
         ];
     }

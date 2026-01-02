@@ -15,11 +15,13 @@ class EloquentMessage extends Model
     protected $fillable = [
         'user_id',
         'content',
+        'discussion_id',
     ];
 
     protected $casts = [
         'id' => 'integer',
         'user_id' => 'integer',
+        'discussion_id' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
